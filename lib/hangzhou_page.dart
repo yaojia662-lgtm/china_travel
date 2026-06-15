@@ -107,10 +107,14 @@ class HangzhouPage extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // 서호 풍경 사진 / 西湖风景照片
+                  // 커버 풍경 사진 / 封面风景照片
                   Image.asset(
-                    'assets/images/xihu.jpg',
+                    'assets/images/cover.jpg',
                     fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Image.asset(
+                      'assets/images/xihu.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   // 어두운 그라디언트 오버레이 / 深色渐变遮罩
                   Container(
@@ -307,58 +311,72 @@ class HangzhouPage extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
                   final food = _foodList[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+                  return GestureDetector(
+                    // 음식 상세 페이지로 이동 / 跳转到美食详情页
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => FoodDetailPage(food: food)),
                     ),
-                    child: Row(
-                      children: [
-                        // 컬러 배경 이모지 / 彩色背景emoji
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: _foodBgColor(food['bg']!),
-                            borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+                      ),
+                      child: Row(
+                        children: [
+                          // 컬러 배경 이모지 / 彩色背景emoji
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: _foodBgColor(food['bg']!),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(food['emoji']!, style: const TextStyle(fontSize: 26)),
+                            ),
                           ),
-                          child: Center(
-                            child: Text(food['emoji']!, style: const TextStyle(fontSize: 26)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  food['name']!,
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF8B4513)),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  food['desc']!,
+                                  style: const TextStyle(fontSize: 12, color: Color(0xFF666666), height: 1.4),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          // 관련 경관 태그 + 화살표 / 相关景点标签+箭头
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(
-                                food['name']!,
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF8B4513)),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE8F5EE),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  food['spot']!,
+                                  style: const TextStyle(fontSize: 10, color: Color(0xFF1A6B4A)),
+                                ),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                food['desc']!,
-                                style: const TextStyle(fontSize: 12, color: Color(0xFF666666), height: 1.4),
-                              ),
+                              const SizedBox(height: 4),
+                              const Icon(Icons.arrow_forward_ios, size: 11, color: Colors.grey),
                             ],
                           ),
-                        ),
-                        // 관련 경관 태그 / 相关景点标签
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8F5EE),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            food['spot']!,
-                            style: const TextStyle(fontSize: 10, color: Color(0xFF1A6B4A)),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -379,6 +397,12 @@ class HangzhouPage extends StatelessWidget {
       'desc': '서호 근처 전통 식당의 대표 요리 / 西湖周边餐厅的代表菜',
       'spot': '서호 / 西湖',
       'bg': 'teal',
+      'imageUrl': 'assets/images/xihu_fish.jpg',
+      'detail': '서호초어(西湖醋鱼)는 항저우 전통 요리로 신선한 서호 잉어를 식초 소스로 조리합니다. '
+          '새콤달콤한 맛이 특징이며, 항저우 방문 시 꼭 먹어야 할 명물 요리입니다.\n\n'
+          '西湖醋鱼是杭州传统名菜，以新鲜草鱼为原料，用醋汁烹制而成。'
+          '酸甜适口，是来杭州必吃的经典美食。',
+      'tip': '서호 근처 러우와이러우(楼外楼) 식당이 가장 유명합니다 / 西湖边的楼外楼餐厅最为著名',
     },
     {
       'emoji': '🍖',
@@ -386,6 +410,11 @@ class HangzhouPage extends StatelessWidget {
       'desc': '송성 내 전통 식당, 소동파의 즐겨먹던 요리 / 宋城餐厅，苏东坡最爱的红烧肉',
       'spot': '송성 / 宋城',
       'bg': 'red',
+      'imageUrl': 'assets/images/dongpo_pork.jpg',
+      'detail': '동파육(东坡肉)은 송나라 시인 소동파가 만들었다고 전해지는 삼겹살 요리입니다. '
+          '간장, 설탕, 황주로 장시간 조린 부드러운 식감이 특징입니다.\n\n'
+          '东坡肉相传是宋代诗人苏东坡所创，以五花肉为主料，用酱油、糖、黄酒长时间炖制，口感软糯鲜美。',
+      'tip': '송성 경구 내 전통 식당에서 맛볼 수 있습니다 / 宋城景区内传统餐厅可品尝',
     },
     {
       'emoji': '🥬',
@@ -393,6 +422,11 @@ class HangzhouPage extends StatelessWidget {
       'desc': '영은사 내 전통 불교 채식 요리 / 灵隐寺内传统佛教素食',
       'spot': '영은사 / 灵隐寺',
       'bg': 'green',
+      'imageUrl': 'assets/images/suzhai.jpg',
+      'detail': '소채(素斋)는 영은사에서 제공하는 전통 불교 채식 요리입니다. '
+          '신선한 제철 채소와 두부를 사용하며, 담백하고 건강한 맛이 특징입니다.\n\n'
+          '素斋是灵隐寺提供的传统佛教素食，使用新鲜时令蔬菜和豆腐，口味清淡健康。',
+      'tip': '사찰 내 소채관에서 식사 가능, 예약 권장 / 寺内素斋馆可用餐，建议提前预约',
     },
     {
       'emoji': '🦐',
@@ -400,6 +434,11 @@ class HangzhouPage extends StatelessWidget {
       'desc': '뇌봉탑 근처, 룽징차와 새우의 조합 명물 / 雷峰塔附近，龙井茶与虾仁的经典搭配',
       'spot': '뇌봉탑 / 雷峰塔',
       'bg': 'orange',
+      'imageUrl': 'assets/images/longjing_shrimp.jpg',
+      'detail': '룽징 새우(龙井虾仁)는 항저우 명물 룽징차 잎과 신선한 새우를 함께 볶은 요리입니다. '
+          '차의 향과 새우의 신선함이 어우러져 독특한 풍미를 냅니다.\n\n'
+          '龙井虾仁是将杭州名茶龙井茶叶与新鲜虾仁一起炒制的菜肴，茶香与虾的鲜美融合，风味独特。',
+      'tip': '봄철 새 룽징차 시즌(3~4월)에 가장 맛있습니다 / 春季新茶上市(3~4月)时味道最佳',
     },
     {
       'emoji': '🐟',
@@ -407,6 +446,11 @@ class HangzhouPage extends StatelessWidget {
       'desc': '서계 습지 수상 레스토랑의 신선한 민물 요리 / 西溪湿地水上餐厅的新鲜河鲜',
       'spot': '서계습지 / 西溪湿地',
       'bg': 'blue',
+      'imageUrl': 'assets/images/river_fish.jpg',
+      'detail': '서계 습지 수상 레스토랑에서 즐기는 신선한 민물 요리입니다. '
+          '습지에서 잡은 물고기, 새우, 게 등 다양한 식재료를 사용합니다.\n\n'
+          '在西溪湿地水上餐厅享用新鲜河鲜，食材来自湿地的鱼、虾、蟹等，新鲜美味。',
+      'tip': '수상 식당에서 습지 풍경을 감상하며 식사할 수 있습니다 / 可在水上餐厅边赏湿地美景边用餐',
     },
   ];
 }
@@ -932,6 +976,148 @@ class _DetailCard extends StatelessWidget {
           const Divider(height: 1),
           const SizedBox(height: 12),
           child,
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 음식 상세 페이지 / 美食详情页面 ─────────────────────────────
+class FoodDetailPage extends StatelessWidget {
+  final Map<String, String> food;
+
+  const FoodDetailPage({super.key, required this.food});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF8F0),
+      body: CustomScrollView(
+        slivers: [
+          // 음식 상단 이미지 / 美食顶部图片
+          SliverAppBar(
+            expandedHeight: 280,
+            pinned: true,
+            backgroundColor: const Color(0xFFE07B39),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                food['name']!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                ),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // 음식 사진 / 美食照片
+                  Image.asset(
+                    food['imageUrl']!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      decoration: BoxDecoration(
+                        color: _foodBgColor(food['bg']!),
+                      ),
+                      child: Center(
+                        child: Text(food['emoji']!, style: const TextStyle(fontSize: 80)),
+                      ),
+                    ),
+                  ),
+                  // 어두운 오버레이 / 深色遮罩
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black45],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 관련 경관 태그 / 相关景点标签
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Color(0xFF1A6B4A), size: 16),
+                      const SizedBox(width: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8F5EE),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          food['spot']!,
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF1A6B4A), fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 상세 설명 카드 / 详细介绍卡片
+                  _DetailCard(
+                    icon: Icons.restaurant_menu,
+                    title: '음식 소개 / 美食介绍',
+                    child: Text(
+                      food['detail']!,
+                      style: const TextStyle(fontSize: 13, color: Color(0xFF444444), height: 1.7),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 여행 팁 / 小贴士
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF3E0),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFFCC80)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.lightbulb_outline, color: Color(0xFFE07B39), size: 20),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '추천 팁 / 推荐小贴士',
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFE07B39)),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                food['tip']!,
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF555555), height: 1.5),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
